@@ -1,0 +1,38 @@
+<aura:component controller = "EbayConnector" implements="force:appHostable,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,force:hasRecordId" access="global">
+    
+    <aura:attribute type="List" name="OrderList"/>
+    <aura:attribute name="Ordercolumns" type="List"/>
+    <aura:attribute name="spinner" type="Boolean" default="FALSE" />
+    <aura:attribute name="OdersListIsTrue" type="boolean" default="false"/>
+    
+    <div  style="background-color:white;">
+        <div class="slds-align_absolute-center" style="font-size:25px">
+            Ebay Orders
+        </div>
+        <br/>
+        <div class="slds-align_absolute-center">
+            <lightning:button label="SignIn To Ebay"  onclick="{!c.CallEbaySignIn}"/>
+            <lightning:button   disabled="{!v.spinner}" label="{!v.spinner == true ? 'GettingOrders...' : 'Get EbayOrders'}" onclick="{! c.getOrders }"/>
+        </div>
+        <br/>
+        
+        <div style="padding-right:0.5rem;padding-left:0.5rem">
+            <aura:if isTrue="{!v.OdersListIsTrue}">
+                <lightning:card  title="OrdersTable">
+                    <lightning:datatable data="{! v.OrderList }"
+                                         columns="{! v.Ordercolumns }"
+                                         keyField="id"
+                                         hideCheckboxColumn="true"/>
+                </lightning:card>
+            </aura:if>
+           
+        </div>
+        <br/>
+    </div>
+    <aura:if isTrue="{!v.spinner}">
+        <div>
+            <lightning:spinner alternative-text="Loading" class="spins" size="large" variant="brand"></lightning:spinner>
+        </div>
+    </aura:if>
+    
+</aura:component>

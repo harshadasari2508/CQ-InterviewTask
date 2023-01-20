@@ -1,0 +1,76 @@
+<aura:component controller="TwilioSMSChatController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="message" type="String" />
+    <aura:attribute name="isDisabled" type="Boolean" default="true"/>
+    <aura:attribute name="showLoadingSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="smsList" type="List" />
+      <aura:attribute name="channelName" type="String" default="" />
+    <aura:attribute name="autoRefresh" type="String" default="Yes" />
+    <aura:attribute name="isSupported" type="Boolean" default="false" />
+    
+    <ltng:require scripts="{!$Resource.SupportedObjectsForChangeEvent}" afterScriptsLoaded="{!c.checkCompatibility}" />
+  
+    <aura:if isTrue="{!v.isSupported}">
+      
+        <c:RecordChangeEventHandler channelName="{!v.channelName}" onRecordChange="{!c.handleMessage}" />
+        <aura:set attribute="else">
+            <div style="color:red;font-weight: bold;">.</div>
+        </aura:set>
+    </aura:if>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:card>
+        <div style="padding-bottom:14px;">
+            <h3><b style="font-size: 125%;padding-left: 17px;">{!v.data.LastName}</b></h3>
+        </div>
+        
+        <section role="log" class="slds-chat">
+            <div class=""  style="height:15rem;overflow-y:scroll;" id="listdown">
+                <ul class="slds-chat-list">
+                 
+                    <aura:iteration items="{!v.smsList}" var="item"> 
+                        <aura:if isTrue="{!item.SMS_Type__c == 'Inbound'}">
+                            <li class="slds-chat-listitem slds-chat-listitem_inbound">
+                                <div class="slds-chat-message">
+                                    <div class="slds-chat-message__body">
+                                        <div class="slds-chat-message__text slds-chat-message__text_inbound" id="{!item.Id}">
+                                            {!item.Inbound_SMS__c}
+                                        </div>
+                                        <!--     <div class="slds-chat-message__meta" aria-label="said Taylor Watson-Rice at 4:59 PM">Taylor Watson-Rice • 4:59 PM</div> -->
+                                    </div>
+                                </div>
+                            </li>
+                            <aura:set attribute="else">
+                                <li class="slds-chat-listitem slds-chat-listitem_outbound">
+                                    <div class="slds-chat-message">
+                                        <div class="slds-chat-message__body">
+                                            <div class="slds-chat-message__text slds-chat-message__text_outbound" id="{!item.Id}">
+                                                {!item.Outbound_SMS__c}
+                                            </div>
+                                            <!--   <div class="slds-chat-message__meta" aria-label="said Taylor Watson-Rice at 4:59 PM">Taylor Watson-Rice • 4:59 PM</div> -->
+                                        </div>
+                                    </div>
+                                </li>
+                            </aura:set>
+                        </aura:if>
+                    </aura:iteration >
+                    <aura:if isTrue="{!v.showLoadingSpinner}">
+                        <div class="slds-text-body_small slds-text-color_error">Sending... 
+                            <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Sending"/>'
+                        </div>
+                    </aura:if>              
+                </ul>
+            </div>
+        </section>
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem size="11">
+                <span onkeypress="{!c.keyCheck}" style="cursor: text;">
+                <div class="custom-box" style="padding-left:10px;"><lightning:input name="input1" label="" placeholder="type here..." value="{!v.message}" aura:id="sendMessage" onchange="{!c.handleChange}"/></div>
+                </span>
+            </lightning:layoutItem>
+            <lightning:layoutItem  size="1">
+                <div class="custom-box" style="padding-top:20px;padding-left:10px;"><lightning:buttonIcon disabled = "{!v.isDisabled}" iconName="utility:send"  aura:id="enter" variant="bare" onclick="{! c.handleClick }" alternativeText="Send" title="Send" size="large" /></div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+</aura:component>
