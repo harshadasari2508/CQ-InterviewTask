@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stop_Account_Creation</fullName>
+    <active>true</active>
+    <description>Stop Creation Of Account When Active CheckBox Is True</description>
+    <errorConditionFormula>IF(Active__c == true &amp;&amp; ISNEW(), true, false)</errorConditionFormula>
+    <errorMessage>Account must only be added as Inactive (Active = unchecked).</errorMessage>
+</ValidationRule>
